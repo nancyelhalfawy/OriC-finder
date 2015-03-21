@@ -26,8 +26,39 @@
 				</tbody>
 			</table>
 			<div class='form-group'>
-				<label>Window size: <span id='window-size-label'></span>bp</label>
-				<input type='range' min='100' max='1500' step="20" value="500" id='window-size'>
+				<label>Window size: <span id='window-size-label'>10000</span>bp</label>
+				<input type='range' min='1000' max='1000000' step="1000" value="500000" id='window-size'>
+			</div>
+			<div class='form-group'>
+				<label>
+
+					<table class='fraction'>
+						<tr>
+							<td nowrap="nowrap">dy</td>
+						</tr>
+						<tr>
+							<td class='bottom'>dx</td>
+						</tr>
+					</table>
+
+					Sample frequency: every <span id='inclanation-freq-label'>100th</span>
+				</label>
+				<input type='range' min='1' max='500' step="1" value="100" id='inclanation-freq'>
+			</div>
+			<div class='form-group'>
+				<label>
+
+					<table class='fraction'>
+						<tr>
+							<td nowrap="nowrap">dy</td>
+						</tr>
+						<tr>
+							<td class='bottom'>dx</td>
+						</tr>
+					</table>
+
+					Diff threshold: <span id='threshold-label'></span></label>
+				<input type='range' min='0.01' max='0.2' step="0.01" value="0.1" id='threshold'>
 			</div>
 			<div class='form-group'>
 				<label>Speed cap: <span id='speed-cap-label'>uncapped</span></label>

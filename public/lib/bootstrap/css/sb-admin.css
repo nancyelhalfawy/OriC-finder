@@ -257,3 +257,15 @@ ul.alert-dropdown {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+table.fraction {
+    display: inline-table;
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    line-height: 2e;
+}
+table.fraction .bottom {
+    border-top: solid 1px #333;
+}

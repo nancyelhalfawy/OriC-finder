@@ -8,7 +8,7 @@ class SynthesizedDNAGraph extends Backbone.View
 
 	render: ->
 
-		Morris.Donut({
+		@Morris.Donut({
 			element: @el,
 			data: [
 				{label: "Leading Strand", value: 1000},
@@ -19,6 +19,19 @@ class SynthesizedDNAGraph extends Backbone.View
 			formatter: (y, data) ->
 				return data.label
 		})
+
+	setOrigins: (data) ->
+
+		if not data.origins then return
+
+		bp_length = data.length
+		origins = data.origins
+
+		@data = []
+
+		for ori in origins
+			value = ori.bp_index
+
 
 
 

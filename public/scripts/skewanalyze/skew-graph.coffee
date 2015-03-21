@@ -2,11 +2,14 @@
 Backbone = require 'backbone'
 require 'flot'
 
+_ = require 'underscore'
+
 
 
 class SkewGraph extends Backbone.View
 
 	initialize: -> @
+
 
 	startAnalyze: (stuff) ->
 
@@ -14,21 +17,22 @@ class SkewGraph extends Backbone.View
 
 
 		@collection.download window.localStorage.getItem('dna-id'), (result) =>
-			
-			result.speed = stuff.speed
-			result.window_size = stuff.window_size
 
-			@worker.postMessage result
+			@worker.postMessage _.extend result, stuff
 
 		@worker.addEventListener 'message', (ev) =>
 
+			done = false
+
 			if ev.data.done
-				@trigger 'done'
+				@trigger 'done', ev.data
+				done = true
 			else
 				@trigger 'loading', ev.data.progress
 
+			@render ev.data, done, ev.data.origins
 
-			@render ev.data
+
 
 
 	terminateAnalyze: ->
@@ -36,7 +40,7 @@ class SkewGraph extends Backbone.View
 
 
 
-	render: (data) ->
+	render: (data, done, origins) ->
 
 		if not data
 			data =
@@ -46,6 +50,19 @@ class SkewGraph extends Backbone.View
 				max:
 					val: 1
 				length: 1
+
+		markings = []
+
+		if done && origins
+			for ori in origins
+				markings.push {
+					color: '#'+Math.floor(Math.random()*16777215).toString(16),
+					lineWidth: 1,
+					xaxis: {
+						from: ori.bp_index
+						to: ori.bp_index
+					}
+				}
 
 
 
@@ -60,6 +77,9 @@ class SkewGraph extends Backbone.View
 			xaxis: {
 				min: 0,
 				max: data.length
+			},
+			grid: {
+				markings: markings
 			}
 		})
 

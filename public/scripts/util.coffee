@@ -109,4 +109,9 @@ module.exports = {
 		getDNA: getDNA
 	getSelectedDNAMeta: getSelectedDNAMeta
 	storage: storage
+	
+	getOrdinal: (n) ->
+		s = ["th","st","nd","rd"]
+		v = n % 100
+		n+(s[(v-20)%10]||s[v]||s[0])
 }

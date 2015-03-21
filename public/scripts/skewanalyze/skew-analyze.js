@@ -7,6 +7,8 @@ self.addEventListener('message', function (ev) {
 		speed = ev.data.speed,
 		bp_length = ev.data.bp_length,
 		window_size = ev.data.window_size,
+		threshold = ev.data.threshold,
+		inclanation_sample_frequency = ev.data.inclanation_sample_frequency,
 
 		buffer = 0,
 		min = {
@@ -26,13 +28,16 @@ self.addEventListener('message', function (ev) {
 
 		dp_num = Math.round((i_len * 7) / 100),
 
-		inclanation_test_freq = 100,
 		last_tanget,
 		x1 = 0,
 		y1 = 0,
 		x2 = 0,
 		y2 = 0,
 		inclanation = 0,
+		tangents_first = {
+			x2: 0,
+			y2: 0
+		},
 		tangents = [];
 
 
@@ -72,9 +77,9 @@ self.addEventListener('message', function (ev) {
 			}
 
 
-			if (l % inclanation_test_freq === 0) {
+			if (l > 0 && l % inclanation_sample_frequency === 0) {
 
-				last_tanget = tangents[tangents.length - 1];
+				last_tanget = tangents.length === 0 ? tangents_first : tangents[tangents.length - 1];
 
 				x1 = last_tanget.x2;
 				y1 = last_tanget.y2;
@@ -115,7 +120,7 @@ self.addEventListener('message', function (ev) {
 			max: max,
 			length: l,
 			done: true,
-			origins: calculateOrigins(tangents, window_size)
+			origins: calculateOrigins(tangents, window_size, inclanation_sample_frequency, threshold)
 		});
 
 		self.close();

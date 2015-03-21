@@ -25,18 +25,49 @@ class Skew extends Backbone.View
 		if dna_meta
 			@$('#dna-fna').text "#{dna_meta['remoteFNA'].slice(0, -4)}"
 
+			@$('#window-size').attr
+				max: dna_meta.bp_length / 5
+				value: dna_meta.bp_length / 10
+
+
+
+
+	setInclanationFreqLabel: ->
+		val = @$('#inclanation-freq').val()
+
+		@$('#inclanation-freq-label').text util.getOrdinal(val)
 
 	setWindowSizeLabel: ->
-		@$('#window-size-label').text $("#window-size").val()
+		window_size = @getWindowSize()
+
+		incfv = Math.floor window_size / 7
+
+		@$('#window-size-label').text window_size
+
+		inc = @$('#inclanation-freq')
+		inc.attr 'max', incfv
+
+		if inc.val() > incfv
+			inc.val incfv
+			@setInclanationFreqLabel()
+		else
+			inc.val Number(inc.val()) - 1
+			inc.val Number(inc.val()) + 1
 
 	setSpeedCapLabel: ->
 		val = $("#speed-cap").val() + 'hz'
 		if val is '65hz' then val = 'uncapped'
 		@$('#speed-cap-label').text val
 
+	setThresholdLabel: ->
+		val = $("#threshold").val()
+		@$('#threshold-label').text 100 - Math.round(val / 0.2 * 100)
+
 	events:
+		'change #inclanation-freq': 'setInclanationFreqLabel'
 		'change #window-size': 'setWindowSizeLabel'
 		'change #speed-cap': 'setSpeedCapLabel'
+		'change #threshold': 'setThresholdLabel'
 		'click #start-analyze': 'start'
 		'click #stop-analyze': 'stop'
 
@@ -48,6 +79,12 @@ class Skew extends Backbone.View
 
 	getWindowSize: ->
 		Number @$('#window-size').val()
+
+	getInclanationFreq: ->
+		Number @$('#inclanation-freq').val()
+
+	getThreshold: ->
+		Number @$('#threshold').val()
 
 
 	start: (ev) ->
@@ -63,6 +100,8 @@ class Skew extends Backbone.View
 			@skewView.startAnalyze
 				speed: @getSpeed()
 				window_size: @getWindowSize()
+				threshold: @getThreshold()
+				inclanation_sample_frequency: @getInclanationFreq()
 		else
 			alert 'Please select a dna!'
 
@@ -83,17 +122,18 @@ class Skew extends Backbone.View
 		genBank = new GenBank()
 		@skewView = new SkewGraph { collection: genBank }
 
+		synthesizedDNAView = new SynthesizedDNAGraph()
 
-		@skewView.on 'done', =>
+		@skewView.on 'done', (data) =>
 			@$el.find('#skew-progress').text '100%'
 			@toggleStop()
+			synthesizedDNAView.setOrigins data
 
 
 		@skewView.on 'loading', (progress) =>
 			@$el.find('#skew-progress').text progress + '%'
 
 
-		synthesizedDNAView = new SynthesizedDNAGraph()
 
 		@$el.html @templates.layout()
 
@@ -105,9 +145,11 @@ class Skew extends Backbone.View
 
 		@[i]() for i in [
 			'delegateEvents',
+			'setMetaStuff',
+			'setInclanationFreqLabel',
 			'setWindowSizeLabel',
 			'setSpeedCapLabel',
-			'setMetaStuff'
+			'setThresholdLabel'
 		]
 
 
