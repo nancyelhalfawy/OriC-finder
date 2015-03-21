@@ -61,7 +61,7 @@ class Skew extends Backbone.View
 
 	setThresholdLabel: ->
 		val = $("#threshold").val()
-		@$('#threshold-label').text 100 - Math.round(val / 0.2 * 100)
+		@$('#threshold-label').text 100 - Math.round(val / 0.15 * 100)
 
 	events:
 		'change #inclanation-freq': 'setInclanationFreqLabel'

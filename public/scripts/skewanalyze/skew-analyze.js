@@ -120,6 +120,7 @@ self.addEventListener('message', function (ev) {
 			max: max,
 			length: l,
 			done: true,
+			window_size: window_size,
 			origins: calculateOrigins(tangents, window_size, inclanation_sample_frequency, threshold)
 		});
 

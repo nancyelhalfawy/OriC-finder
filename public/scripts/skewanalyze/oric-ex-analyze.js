@@ -40,6 +40,11 @@ function calculateOrigins (tangents, window_size, inclanation_sample_frequency, 
 
 	// example, samples_length = 4
 
+	for (var i = 0; i < 3 * samples_length; i++) {
+		tangents.push(tangents[i]);
+	}
+
+
 	var data = [];
 
 	var approx_areas = [];

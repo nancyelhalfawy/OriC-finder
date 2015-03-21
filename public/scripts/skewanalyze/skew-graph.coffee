@@ -56,7 +56,7 @@ class SkewGraph extends Backbone.View
 		if done && origins
 			for ori in origins
 				markings.push {
-					color: '#'+Math.floor(Math.random()*16777215).toString(16),
+					color: "#333"
 					lineWidth: 1,
 					xaxis: {
 						from: ori.bp_index
@@ -68,7 +68,13 @@ class SkewGraph extends Backbone.View
 
 		plot = $.plot(@$el, [ data.data ], {
 			series: {
-				shadowSize: 0	
+				shadowSize: 0,
+				lines: {
+					show: true
+				}
+				# points: {
+				# 	show: true
+				# }
 			},
 			yaxis: {
 				min: data.min.val,
@@ -80,6 +86,8 @@ class SkewGraph extends Backbone.View
 			},
 			grid: {
 				markings: markings
+				hoverable: true
+				clickable: true
 			}
 		})
 
