@@ -1,9 +1,13 @@
 
+importScripts('oric-ex-analyze.js');
 
 self.addEventListener('message', function (ev) {
 
 	var genome = ev.data.lines,
 		speed = ev.data.speed,
+		bp_length = ev.data.bp_length,
+		window_size = ev.data.window_size,
+
 		buffer = 0,
 		min = {
 			val: 0,
@@ -13,12 +17,23 @@ self.addEventListener('message', function (ev) {
 			val: 0,
 			index: []
 		},
+
 		l = 0,
 		data = [],
 		datap = [],
 		i = 0,
 		i_len = genome.length - 1,
-		dp_num = Math.round((i_len * 7) / 100);
+
+		dp_num = Math.round((i_len * 7) / 100),
+
+		inclanation_test_freq = 100,
+		last_tanget,
+		x1 = 0,
+		y1 = 0,
+		x2 = 0,
+		y2 = 0,
+		inclanation = 0,
+		tangents = [];
 
 
 	var inner = function (i) {
@@ -56,6 +71,27 @@ self.addEventListener('message', function (ev) {
 				datap.push([l, buffer]);
 			}
 
+
+			if (l % inclanation_test_freq === 0) {
+
+				last_tanget = tangents[tangents.length - 1];
+
+				x1 = last_tanget.x2;
+				y1 = last_tanget.y2;
+				x2 = l;
+				y2 = buffer;
+
+				inclanation = (y2 - y1) / (x2 - x1);
+
+				tangents.push({
+					k: inclanation,
+					x1: x1,
+					y1: y1,
+					x2: x2,
+					y2: y2
+				});
+			}
+
 			l++;
 		}
 	};
@@ -67,13 +103,20 @@ self.addEventListener('message', function (ev) {
 			min: min,
 			max: max,
 			length: l,
-			progress: Math.round(l / (i_len * 7) * 10)
+			progress: Math.round(l / bp_length * 100)
 		});
 	};
 
 	var snclose = function () {
 
-		self.postMessage({ data: datap, min: min, max: max, length: l, done: true });
+		self.postMessage({
+			data: datap,
+			min: min,
+			max: max,
+			length: l,
+			done: true,
+			origins: calculateOrigins(tangents, window_size)
+		});
 
 		self.close();
 

@@ -8,13 +8,16 @@ class SkewGraph extends Backbone.View
 
 	initialize: -> @
 
-	startAnalyze: (speed) ->
+	startAnalyze: (stuff) ->
 
 		@worker = new Worker '/scripts/skewanalyze/skew-analyze.js'
 
 
 		@collection.download window.localStorage.getItem('dna-id'), (result) =>
-			result.speed = speed
+			
+			result.speed = stuff.speed
+			result.window_size = stuff.window_size
+
 			@worker.postMessage result
 
 		@worker.addEventListener 'message', (ev) =>

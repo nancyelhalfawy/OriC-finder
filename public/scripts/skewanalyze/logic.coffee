@@ -15,6 +15,7 @@ class Skew extends Backbone.View
 		stuff = 
 			'#dna-name': 'name'
 			'#selected-dna': 'description'
+			'#dna-length': 'bp_length'
 
 		dna_meta = util.getSelectedDNAMeta()
 
@@ -22,7 +23,6 @@ class Skew extends Backbone.View
 			@$(key).text if dna_meta then dna_meta[val] else '...'
 
 		if dna_meta
-			@$('#dna-length').text "~#{dna_meta['lines_length'] * 70}"
 			@$('#dna-fna').text "#{dna_meta['remoteFNA'].slice(0, -4)}"
 
 
@@ -46,6 +46,10 @@ class Skew extends Backbone.View
 		if val > 60 then val = 'uncapped'
 		return val
 
+	getWindowSize: ->
+		Number @$('#window-size').val()
+
+
 	start: (ev) ->
 
 		$(ev.currentTarget).attr('disabled', 'disabled')
@@ -56,7 +60,9 @@ class Skew extends Backbone.View
 		try go = !!JSON.parse(s.getItem("DNA:#{s.getItem("dna-id")}:meta"))
 
 		if go
-			@skewView.startAnalyze @getSpeed()
+			@skewView.startAnalyze
+				speed: @getSpeed()
+				window_size: @getWindowSize()
 		else
 			alert 'Please select a dna!'
 

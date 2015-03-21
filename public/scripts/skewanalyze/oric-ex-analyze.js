@@ -1,0 +1,6 @@
+
+function calculateOrigins (tangents) {
+
+	// for ()
+
+}

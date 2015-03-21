@@ -113,29 +113,42 @@ class Genomes
 
 		fpath = "public/cache/gen-db/#{id}/"
 
-		lines_length = 0
-		editLine = (line) ->
-			line = line.toString()
-			out = ""
-			if lines_length is 0
-				info = line.split('|')
-				description = info[info.length - 1].replace(/^\s+|\s+$/g, '')
-				out = "{\"description\": \"#{description}\", \"lines\": [\n"
-			else if line.replace(/ /g,'') isnt ''
-				out = "\"#{line}\",\n"
-
-			return out
-
 		input = fpath + 'dna.fna'
 		output = fpath + 'dna.json'
 
-		fs.readFileSync(input).toString().split('\n').forEach (line) ->
-			fs.appendFileSync output, editLine(line)
-			lines_length++
+		lines = fs.readFileSync(input).toString().split('\n')
+		len = lines.length - 1 # last line is empty
+		last_line_i = len - 1
+		last_line = lines[last_line_i]
 
-		folder_text = (JSON.stringify @getFolder(id)).substr 1
+		console.log lines.length
 
-		fs.appendFileSync output, "\"\"], \"lines_length\": #{lines_length - 2}, #{folder_text}"
+		infoString = (line) ->
+
+			info = line.split('|')
+			description = info[info.length - 1].replace(/^\s+|\s+$/g, '')
+			"{\"description\": \"#{description}\", \"lines\": [\n"
+
+
+		editLine = (line) -> "\"#{line}\""
+		editLineEnding = ",\n"
+
+		outLine = =>
+			bp_len = last_line.replace(/\s/g, "").length + (last_line_i - 1) * 70
+
+			folder_text = (JSON.stringify @getFolder(id)).substr 1
+			"], \"lines_length\": #{last_line_i}, \"bp_length\": #{bp_len}, #{folder_text}"
+
+		fs.appendFileSync output, infoString(lines[0])
+
+		for index in [1...last_line_i]
+			line = lines[index]
+			fs.appendFileSync output, editLine(line) + editLineEnding
+
+		fs.appendFileSync output, editLine(last_line)
+
+		fs.appendFileSync output, outLine()
+
 
 		callback.call @, id
 
