@@ -6,61 +6,54 @@ require 'flot'
 
 class SkewGraph extends Backbone.View
 
-	render: () ->
+	startAnalyze: (speed) ->
 
-		data = []
-		totalPoints = 300
+		worker = new Worker '/scripts/skewanalyze/skew-analyze.js'
 
-		getRandomData = () ->
+		@collection.download window.localStorage.getItem('dna-id'), (result) ->
+			result.speed = speed
+			worker.postMessage result
 
-			if data.length > 0
-				data = data.slice(1);
-
-			while data.length < totalPoints
-
-				prev = if data.length > 0 then data[data.length - 1] else 50
-				y = prev + Math.random() * 10 - 5
-
-				if y < 0
-					y = 0
-				else if y > 100
-					y = 100
-
-				data.push(y)
-
-			res = []
-			for i in [0...data.length]
-				res.push([i, data[i]])
-
-			return res
+		worker.addEventListener 'message', (ev) =>
+			@render ev.data
 
 
-		updateInterval = 30
 
-		plot = $.plot(@$el, [ getRandomData() ], {
+
+	render: (data) ->
+
+		if not data
+			data =
+				data: []
+				min:
+					val: -1
+				max:
+					val: 1
+				length: 1
+
+
+
+		plot = $.plot(@$el, [ data.data ], {
 			series: {
 				shadowSize: 0	
 			},
 			yaxis: {
-				min: 0,
-				max: 100
+				min: data.min.val,
+				max: data.max.val
 			},
 			xaxis: {
 				min: 0,
-				max: 2000
+				max: data.length
 			}
 		})
 
-		update = ->
 
-			plot.setData([getRandomData()])
+		plot.setData [data]
 
-			plot.setupGrid()
+		plot.setupGrid()
 
-			plot.draw()
-			setTimeout(update, updateInterval)
+		plot.draw()
 
-		update()
 
 
 module.exports = SkewGraph

@@ -1,2 +1,51 @@
-<div id='graph-placeholder' width='640' height='480' style='width: 640px; height: 480px;'></div>
-<div id='synthesized-dna-graph-buffer' width='640' height='480' style='width: 640px; height: 480px;'></div>
+
+<ol class="breadcrumb">
+	<li class="active">
+		<i class="fa fa-location-arrow"></i> Currently Selected DNA: <b id='selected-dna'>...</b>
+	</li>
+</ol>
+
+<div class='row'>
+	<div class='col-md-4'>
+
+		<form>
+			<table class="table">
+				<tbody>
+					<tr>
+						<th>Name</th>
+						<td id='dna-name'>...</td>
+					</tr>
+					<tr>
+						<th>Accession</th>
+						<td id='dna-fna'>...</td>
+					</tr>
+					<tr>
+						<th>Bp length</th>
+						<td><span id='dna-length'></span></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class='form-group'>
+				<label>Window size: <span id='window-size-label'></span>bp</label>
+				<input type='range' min='100' max='1500' step="20" value="500" id='window-size'>
+			</div>
+			<div class='form-group'>
+				<label>Speed cap: <span id='speed-cap-label'>uncapped</span></label>
+				<input type='range' min='10' max='65' step="5" value="65" id='speed-cap'>
+			</div>
+			<div class="form-group">
+				<p>
+					<button type="button" class="btn btn-primary btn-lg" id="start-analyze">Run</button>
+				</p>
+			</div>	
+		</form>
+
+
+	</div>
+	<div class='col-md-4'>
+		<div id='synthesized-dna-graph-buffer' width='320' height='240' style='width: 320px; height: 240px;'></div>
+	</div>
+	<div class='col-md-4'>
+		<div id='graph-placeholder' width='320' height='240' style='width: 320px; height: 240px;'></div>
+	</div>
+</div>

@@ -2,6 +2,7 @@
 _ = require 'underscore'
 
 
+
 createNamespace = (container, name, val) ->
 
 	ns = name.split('.')
@@ -77,10 +78,35 @@ getDNA = (id) ->
 
 	return dna
 
+
+getSelectedDNAMeta = ->
+
+	id = window.localStorage.getItem 'dna-id'
+
+	if id
+		dna = window.localStorage.getItem "DNA:#{id}:meta"
+		if dna
+			return JSON.parse dna
+
+	return false
+
+
+storage =
+
+	db: {}
+
+	get: (what) ->
+		getNamespace @db, what
+	set: (what) ->
+		createNamespace @db, what
+
 module.exports = {
+
 	getNamespace: getNamespace
 	createNamespace: createNamespace
 	localStorage:
 		saveDNA: saveDNA
 		getDNA: getDNA
+	getSelectedDNAMeta: getSelectedDNAMeta
+	storage: storage
 }
