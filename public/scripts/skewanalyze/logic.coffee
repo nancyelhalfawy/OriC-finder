@@ -38,6 +38,7 @@ class Skew extends Backbone.View
 		'change #window-size': 'setWindowSizeLabel'
 		'change #speed-cap': 'setSpeedCapLabel'
 		'click #start-analyze': 'start'
+		'click #stop-analyze': 'stop'
 
 
 	getSpeed: ->
@@ -45,7 +46,11 @@ class Skew extends Backbone.View
 		if val > 60 then val = 'uncapped'
 		return val
 
-	start: ->
+	start: (ev) ->
+
+		$(ev.currentTarget).attr('disabled', 'disabled')
+		$("#stop-analyze").attr('disabled', false)
+
 		s = window.localStorage
 		go = false
 		try go = !!JSON.parse(s.getItem("DNA:#{s.getItem("dna-id")}:meta"))
@@ -54,6 +59,14 @@ class Skew extends Backbone.View
 			@skewView.startAnalyze @getSpeed()
 		else
 			alert 'Please select a dna!'
+
+	toggleStop: ->
+		$("#stop-analyze").attr('disabled', 'disabled')
+		$("#start-analyze").attr('disabled', false)
+
+	stop: (ev) ->
+		@skewView.terminateAnalyze()
+		@toggleStop()
 
 	initialize: ->
 
@@ -64,6 +77,14 @@ class Skew extends Backbone.View
 		genBank = new GenBank()
 		@skewView = new SkewGraph { collection: genBank }
 
+
+		@skewView.on 'done', =>
+			@$el.find('#skew-progress').text '100%'
+			@toggleStop()
+
+
+		@skewView.on 'loading', (progress) =>
+			@$el.find('#skew-progress').text progress + '%'
 
 
 		synthesizedDNAView = new SynthesizedDNAGraph()

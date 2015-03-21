@@ -15,8 +15,10 @@ self.addEventListener('message', function (ev) {
 		},
 		l = 0,
 		data = [],
+		datap = [],
 		i = 0,
-		i_len = genome.length - 1;
+		i_len = genome.length - 1,
+		dp_num = Math.round((i_len * 7) / 100);
 
 
 	var inner = function (i) {
@@ -50,9 +52,31 @@ self.addEventListener('message', function (ev) {
 			}
 
 			data.push([l, buffer]);
+			if (l % 1000 === 0) {
+				datap.push([l, buffer]);
+			}
 
 			l++;
 		}
+	};
+
+
+	var post = function () {
+		self.postMessage({
+			data: datap,
+			min: min,
+			max: max,
+			length: l,
+			progress: Math.round(l / (i_len * 7) * 10)
+		});
+	};
+
+	var snclose = function () {
+
+		self.postMessage({ data: datap, min: min, max: max, length: l, done: true });
+
+		self.close();
+
 	};
 
 	if (speed === 'uncapped') {
@@ -61,31 +85,41 @@ self.addEventListener('message', function (ev) {
 
 			inner(i);
 
-			if (i % 500 === 0) {
-				self.postMessage({ data: data, min: min, max: max, length: l });
+			if (i % dp_num === 0) {
+				post();
 			}
 		}
+
+		snclose();
 
 	} else {
 
 		speed = Number(speed);
 
-		setInterval( function () {
+		var id = setInterval( function () {
 
-			inner(i);
+			if (i < i_len) {
 
-			i++;
+				if (i % speed === 0) {
+					post();
+				}
 
-			if (i % speed === 0) {
-				self.postMessage({ data: data, min: min, max: max, length: l });
+				inner(i);
+
+				i++;
+
+			} else {
+
+				clearInterval(id);
+
+				snclose();
+
 			}
+
 
 		}, 1000 / speed );
 	}
 
-	self.postMessage({ data: data, min: min, max: max, length: l });
-
-	self.close();
 	// setInterval(f, 1000)
 
 });

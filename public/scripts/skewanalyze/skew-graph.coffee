@@ -6,17 +6,30 @@ require 'flot'
 
 class SkewGraph extends Backbone.View
 
+	initialize: -> @
+
 	startAnalyze: (speed) ->
 
-		worker = new Worker '/scripts/skewanalyze/skew-analyze.js'
+		@worker = new Worker '/scripts/skewanalyze/skew-analyze.js'
 
-		@collection.download window.localStorage.getItem('dna-id'), (result) ->
+
+		@collection.download window.localStorage.getItem('dna-id'), (result) =>
 			result.speed = speed
-			worker.postMessage result
+			@worker.postMessage result
 
-		worker.addEventListener 'message', (ev) =>
+		@worker.addEventListener 'message', (ev) =>
+
+			if ev.data.done
+				@trigger 'done'
+			else
+				@trigger 'loading', ev.data.progress
+
+
 			@render ev.data
 
+
+	terminateAnalyze: ->
+		@worker.terminate()
 
 
 
