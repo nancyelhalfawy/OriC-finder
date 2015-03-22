@@ -33680,7 +33680,7 @@ DnaA = (function(superClass) {
 
   DnaA.prototype.calculate = function(dna) {
     var worker;
-    worker = new Worker('/scripts/dnaa/dnaa-analyze.js');
+    worker = new Worker('/OriC-finder/scripts/dnaa/dnaa-analyze.js');
     return worker.postMessage(dna);
   };
 
@@ -34198,7 +34198,7 @@ SkewGraph = (function(superClass) {
   };
 
   SkewGraph.prototype.startAnalyze = function(stuff) {
-    this.worker = new Worker('/scripts/skewanalyze/skew-analyze.js');
+    this.worker = new Worker('/OriC-finder/scripts/skewanalyze/skew-analyze.js');
     this.collection.download(window.localStorage.getItem('dna-id'), (function(_this) {
       return function(result) {
         return _this.worker.postMessage(_.extend(result, stuff));
