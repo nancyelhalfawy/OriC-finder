@@ -55,7 +55,7 @@ class SynthesizedDNAGraph extends Backbone.View
 
 
 		chromo.unshift
-			type: if chromo[0].type is 'ori' then 'lagging' else 'leading'
+			type: if chromo[0].type is 'ori' then 'leading' else 'lagging'
 			value: chromo[0].index
 			index: 0
 
@@ -65,7 +65,7 @@ class SynthesizedDNAGraph extends Backbone.View
 			last = chromo[i - 1]
 			current = chromo[i]
 			chromo.splice i, 0,
-				type: if current.type is 'ori' then 'lagging' else 'leading'
+				type: if current.type is 'ori' then 'leading' else 'lagging'
 				index: last.index + last.value
 				value: current.index - last.index
 
@@ -76,7 +76,7 @@ class SynthesizedDNAGraph extends Backbone.View
 			last = chromo[chromo.length - 1]
 			index = chromo[chromo.length - 1].index + chromo[chromo.length - 1].value
 
-			type: if last.type is 'ori' then 'leading' else 'lagging'
+			type: if last.type is 'ori' then 'lagging' else 'leading'
 			value: bp_length - index
 			index: index
 
@@ -108,7 +108,6 @@ class SynthesizedDNAGraph extends Backbone.View
 				value: chro.value
 
 		@morris.options.colors = morris_colors
-		console.log @morris
 		@morris.setData morris_data
 		@morris.select select_id
 

@@ -9,6 +9,10 @@ class DnaA extends Backbone.View
 
 		@on 'load', @render
 
+	calculate: (dna) ->
+		worker = new Worker('/scripts/dnaa/dnaa-analyze.js')
+		worker.postMessage dna
+
 	start: ->
 
 		dna = util.storage.get('dna')
@@ -16,7 +20,7 @@ class DnaA extends Backbone.View
 		if not dna
 			return alert('You need to select and preanalyze dna in GC skew')
 		else
-			console.log util.storage
+			@calculate dna
 
 	events: 
 		'click #start-analyze': 'start'

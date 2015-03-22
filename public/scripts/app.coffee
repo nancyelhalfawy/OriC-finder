@@ -115,13 +115,14 @@ class Router extends Backbone.Router
 
 	initialize: ->
 
-		if window.location.hostname is 'localhost' or window.location.hostname is '127.0.0.1'
+		if window.location.pathname is 'public'
 
-			state = 'local'
+			window.rootURL = '/public'
 
 		else
 
-			state = 'remote'
+			window.rootURL = ''
+
 
 
 		pages = new Pages([

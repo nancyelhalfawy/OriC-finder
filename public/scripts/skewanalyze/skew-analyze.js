@@ -116,6 +116,7 @@ self.addEventListener('message', function (ev) {
 
 		self.postMessage({
 			data: datap,
+			genome: genome,
 			min: min,
 			max: max,
 			length: l,
