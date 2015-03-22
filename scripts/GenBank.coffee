@@ -78,18 +78,18 @@ class LocalStorageTests
 		callback.call @, result
 
 class Test
-	
+
 
 	constructor: (@id) ->
 
 		tstL =
-			'cache.listing': new AjaxTests "cache/gen-db/listing.json"
-			'ftp.listing': new AjaxTests "download"
+			'cache.listing': new AjaxTests "/OriC-finder/cache/gen-db/listing.json"
+			'ftp.listing': new AjaxTests "/OriC-finder/download"
 			'localStorage.listing': new LocalStorageTests "DNA"
 
 		tstD =
-			'cache.DNA': new AjaxTests "cache/gen-db/#{@id}/dna.json"
-			'ftp.DNA': new AjaxTests "download/#{@id}"
+			'cache.DNA': new AjaxTests "/OriC-finder/cache/gen-db/#{@id}/dna.json"
+			'ftp.DNA': new AjaxTests "/OriC-finder/download/#{@id}"
 			'localStorage.DNA': new LocalStorageTests "#{@id}:line:0"
 
 		tst = if @id then tstD else tstL
