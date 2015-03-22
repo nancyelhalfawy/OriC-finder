@@ -1,6 +1,7 @@
 
 
 DNA = "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"
+# DNA = "ATTA"
 
 
 class Tree
@@ -17,7 +18,7 @@ class Tree
 		mers = []
 		traverse = (b, v) ->
 			for key, val of b
-				if key isnt 'num' or key isnt 'level'
+				if key isnt 'num' and key isnt 'level'
 					if val.level < k
 						traverse val, v + key
 					else
@@ -63,14 +64,16 @@ class Tree
 			@extend p
 
 	grow: ->
-		for i in [1...@DNA.length]
-			@add @DNA.substr 0, i
+		for i in [1..@DNA.length]
+			p = @DNA.substr 0, i
+			@add p
 	
 
 
 tree = new Tree(DNA)
 tree.grow()
-# console.log tree.getKmers(10)
+console.log tree.getKmers(50)
+# console.log tree.tree
 
 
 
