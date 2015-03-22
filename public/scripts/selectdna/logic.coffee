@@ -147,6 +147,7 @@ class SelectDNA extends Backbone.View
 	initialize: ->
 
 		@on 'load', @download
+		@on 'navigate', @setSelectedDNATitle
 
 
 	setSelectedDNATitle: ->

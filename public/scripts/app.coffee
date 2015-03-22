@@ -60,7 +60,9 @@ class App extends Backbone.View
 
 	initialize: (settings) ->
 		@titleEl = @$('#page-title')
-		@contentEl = @$('#page-content')
+
+		# will change in @render
+		# @contentEl = @$('#page-content')
 
 
 	setTitle: (title) ->
@@ -75,11 +77,30 @@ class App extends Backbone.View
 
 	render: (page_name) ->
 
-		page = @collection.findWhere({ name: page_name })
+		try @contentEl.hide() # hide old contentEl
+
+		el_id = "page-#{page_name}-container"
+		el = @$('#page-content').find "##{el_id}"
 
 
-		@setTitle page.get('name')
-		if page.get('menu-item') then @activateMenuItem page.get('menu-item')
+		procedure = (el) =>
+			@contentEl = el
+			page = @collection.findWhere({ name: page_name })
+			@setTitle page.get('name')
+			if page.get('menu-item') then @activateMenuItem page.get('menu-item')
+
+			return page
+
+
+		if el.length
+			page = procedure el
+			page.view.trigger 'navigate'
+			return el.show()
+		else
+			el = $("<div id='#{el_id}'>").appendTo @$('#page-content')
+			
+
+		page = procedure el
 
 		if page.get 'dynamic'
 			page.view.setElement @contentEl
@@ -125,6 +146,13 @@ class Router extends Backbone.Router
 				'menu-item': '#menu-skew'
 			}
 
+			{
+				name: 'dnaa'
+				template: templates.dnaa
+				view: require './dnaa/DnaAView.coffee'
+				'menu-item': '#menu-dnaa'
+			}
+
 		])
 
 		@app = new App
@@ -137,6 +165,7 @@ class Router extends Backbone.Router
 		'': 'home'
 		'skewanalyze': 'skewanalyze'
 		'selectdna': 'selectdna'
+		'dnaa': 'dnaa'
 		'selectdna-:collapse': 'nothing'
 		# 'selectdna/download/:id': 'download...'
 		# 'selectdna/select/:id': 'download...'
@@ -149,6 +178,10 @@ class Router extends Backbone.Router
 
 	selectdna: ->
 		@app.render 'selectdna'
+
+	dnaa: ->
+		@app.render 'dnaa'
+
 
 
 	skewanalyze: ->

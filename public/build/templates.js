@@ -2,6 +2,10 @@ module.exports = function(Handlebars) {
 
 this["JST"] = this["JST"] || {};
 
+this["JST"]["dnaa.content"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<ol class=\"breadcrumb\">\n	<li class=\"active\">\n		<i class=\"fa fa-location-arrow\"></i> Currently Selected DNA: <b id='selected-dna'>...</b>\n	</li>\n</ol>\n\n<div class='row'>\n	<div class='col-md-4'>\n\n		<form>\n			<div class='form-group'>\n				<label>Threshold: <span id='threshold-label'></span></label>\n				<input type='range' min='0.005' max='0.15' step=\"0.001\" value=\"0.03\" id='threshold'>\n			</div>\n			<div class='form-group'>\n				<label>Speed cap: <span id='speed-cap-label'>uncapped</span></label>\n				<input type='range' min='10' max='65' step=\"5\" value=\"65\" id='speed-cap'>\n			</div>\n			<div class=\"form-group\">\n				<p>\n					<button type=\"button\" class=\"btn btn-primary btn-lg\" id=\"start-analyze\">Run</button>\n					<button type=\"button\" class=\"btn btn-danger btn-lg\" id=\"stop-analyze\" disabled=\"disabled\">Stop</button>\n					<button type=\"button\" class=\"btn btn-link btn-lg\" disabled=\"disabled\" id=\"skew-progress\"></button>\n				</p>\n			</div>	\n		</form>\n\n\n	</div>\n	<div class='col-md-8'>\n		<table class=\"table\" id='sequrence-table'>\n			<thead>\n				<tr>\n					<th>Sequence</th>\n					<th>BP index</th>\n					<th>Reverse complement</th>\n				</tr>\n			</thead>\n			<tbody>\n				<tr>\n					<td>ATCTCGA</td>\n					<td>1203401</td>\n					<td>TCGAGAT</td>\n				</tr>\n			</tbody>\n		</table>\n	</div>\n</div>\n\n";
+  },"useData":true});
+
 this["JST"]["home.info"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "here is some information";
   },"useData":true});

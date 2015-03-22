@@ -97,8 +97,8 @@ storage =
 
 	get: (what) ->
 		getNamespace @db, what
-	set: (what) ->
-		createNamespace @db, what
+	set: (what, val) ->
+		createNamespace @db, what, val
 
 module.exports = {
 

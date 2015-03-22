@@ -10,25 +10,53 @@ GenBank = require '../GenBank.coffee'
 
 class Skew extends Backbone.View
 
+	initialize: ->
 
-	setMetaStuff: ->
-		stuff = 
-			'#dna-name': 'name'
-			'#selected-dna': 'description'
-			'#dna-length': 'bp_length'
+		@on 'navigate', @pagesetup, @
+		@on 'load', @render, @
 
-		dna_meta = util.getSelectedDNAMeta()
+	render: ->
 
-		for key, val of stuff
-			@$(key).text if dna_meta then dna_meta[val] else '...'
+		genBank = new GenBank()
+		@skewView = new SkewGraph { collection: genBank }
 
-		if dna_meta
-			@$('#dna-fna').text "#{dna_meta['remoteFNA'].slice(0, -4)}"
+		synthesizedDNAView = new SynthesizedDNAGraph()
 
-			@$('#window-size').attr
-				max: dna_meta.bp_length / 5
-				value: dna_meta.bp_length / 10
+		@skewView.on 'done', (data) =>
+			@$el.find('#skew-progress').text '100%'
+			@toggleStop()
+			synthesizedDNAView.setOrigins data
 
+			util.storage.set 'dna', data
+
+
+		@skewView.on 'loading', (progress) =>
+			@$el.find('#skew-progress').text progress + '%'
+
+
+
+		@$el.html @templates.layout()
+
+		@skewView.setElement @$("#graph-placeholder")
+		@skewView.render()
+
+		synthesizedDNAView.setElement @$("#synthesized-dna-graph-buffer")
+		synthesizedDNAView.render()
+
+		@[i]() for i in [
+			'delegateEvents'
+		]
+
+		@pagesetup()
+
+	pagesetup: ->
+		@[i]() for i in [
+			'setMetaStuff',
+			'setInclanationFreqLabel',
+			'setWindowSizeLabel',
+			'setSpeedCapLabel',
+			'setThresholdLabel'
+		]
 
 
 
@@ -113,44 +141,29 @@ class Skew extends Backbone.View
 		@skewView.terminateAnalyze()
 		@toggleStop()
 
-	initialize: ->
-
-		@on 'load', @render, @
-
-	render: ->
-
-		genBank = new GenBank()
-		@skewView = new SkewGraph { collection: genBank }
-
-		synthesizedDNAView = new SynthesizedDNAGraph()
-
-		@skewView.on 'done', (data) =>
-			@$el.find('#skew-progress').text '100%'
-			@toggleStop()
-			synthesizedDNAView.setOrigins data
-
-
-		@skewView.on 'loading', (progress) =>
-			@$el.find('#skew-progress').text progress + '%'
 
 
 
-		@$el.html @templates.layout()
 
-		@skewView.setElement @$("#graph-placeholder")
-		@skewView.render()
+	setMetaStuff: ->
+		stuff = 
+			'#dna-name': 'name'
+			'#selected-dna': 'description'
+			'#dna-length': 'bp_length'
 
-		synthesizedDNAView.setElement @$("#synthesized-dna-graph-buffer")
-		synthesizedDNAView.render()
+		dna_meta = util.getSelectedDNAMeta()
 
-		@[i]() for i in [
-			'delegateEvents',
-			'setMetaStuff',
-			'setInclanationFreqLabel',
-			'setWindowSizeLabel',
-			'setSpeedCapLabel',
-			'setThresholdLabel'
-		]
+		for key, val of stuff
+			@$(key).text if dna_meta then dna_meta[val] else '...'
+
+		if dna_meta
+			@$('#dna-fna').text "#{dna_meta['remoteFNA'].slice(0, -4)}"
+
+			@$('#window-size').attr
+				max: dna_meta.bp_length / 5
+				value: dna_meta.bp_length / 10
+
+
 
 
 
