@@ -78,6 +78,7 @@ class LocalStorageTests
 		callback.call @, result
 
 class Test
+	
 
 	constructor: (@id) ->
 
