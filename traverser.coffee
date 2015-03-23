@@ -46,45 +46,64 @@ traverser_list_of_success = []
 
 class Traverser
 
-	constructor: (@start_point, @distance, @sequence) -> @
+	constructor: (@start_point, @distance, @sequence) ->
+		@kmers = 0
+		@traverse_paths = []
+		@
+
 	wildcards: 2
 	traveled: 0
-	traverse_paths: []
-	kmers: 0
 
 	traverse: ->
+
 		deletion = []
 		addition = []
 
-		for path, index in @traverse_paths when not path.branches.hasOwnProperty @sequence[@traveled]
+		for path, index in @traverse_paths
 
-			if path.tolerance <= 1
-				deletion.push index
-			else
-				addition.push index
+			path.distance_traveled++
 
+			if not path.branches.hasOwnProperty @sequence[@traveled]
+
+				path.tolerance--
+
+				if path.tolerance <= 1
+					deletion.push index
+				else
+					addition.push index
+
+		# if e.g. ATGAGAT gets match, on ATGAG$ but $ isnt A, then addition -> spawn clones
+		# Otherwise, what should happend when path.distance_traveled is k?
 
 		for i in addition
+			atp = @traverse_paths[i]
+			@cloneInto atp.branches, 'ghost-clone' atp.tolerance, atp.distance_traveled
 
-			@cloneInto @traverse_paths[i].branches, tolerance = @traverse_paths[i].tolerance - 1
 			deletion.push(i)
 
 		for i in deletion
 			@traverse_paths.splice i, 1
 
-		if @traveled >= @distance
-			@kmers++
+		if @traveled is k then console.log @sequence, @start_point
 
-		if @traverse_paths.length > 0
-			@traveled++
+		if @traveled is k then @kmers++
+		if @traverse_paths.length < 1 then return @end()
 
 
-	createPath: (branches, type, tolerance = @wildcards) ->
-		return { branches: branches, type: type, tolerance: tolerance }
 
-	cloneInto: (branch, tolerance = @wildcards) ->
+	end: ->
+		traverseCommander.dismiss @commander_index
+
+	createPath: (branches, type, tolerance = @wildcards, distance_traveled = 0) ->
+		return
+			branches: branches
+			type: type
+			tolerance: tolerance
+			distance_traveled: distance_traveled
+
+	cloneInto: (branch, tolerance = @wildcards, distance_traveled = 0) ->
 		for leaf, val of branch
-			@traverse_paths.push @createPath val.branches, "ghost-clone", tolerance
+			@traverse_paths.push @createPath val.branches, "ghost-clone", tolerance, distance_traveled
 	init: ->
 		if not tree.branches.hasOwnProperty @sequence[0]
 			@wildcards--
@@ -94,22 +113,22 @@ class Traverser
 
 		@traveled++
 
-		traverseCommander.listen @traverse, @
+		@commander_index = traverseCommander.listen @traverse, @
 
 # build initial structure
-for i in [0...k]
-	seq = dna.substr i, k - i
-	namespace i, seq
+# for i in [0...k]
+# 	seq = dna.substr i, k - i
+# 	namespace i, seq
 
-# To initial traverse to catch up with the building of the structure
-seq = dna.substr 0, k
-traverser = new Traverser(0, k, seq)
-traverser.init()
-traverseCommander.walk(k)
+# # To initial traverse to catch up with the building of the structure
+# seq = dna.substr 0, k
+# traverser = new Traverser(0, k, seq)
+# traverser.init()
+# traverseCommander.walk(k)
 
-console.log traverser
+# console.log traverser.sequence, traverser.kmers, JSON.stringify traverser.traverse_paths
 
-for i in [1...dna.length - k] when i < 4
+for i in [0...dna.length - k] when i < 14
 
 	seq = dna.substr i, k
 	namespace i, seq
@@ -119,4 +138,5 @@ for i in [1...dna.length - k] when i < 4
 	traverser = new Traverser(i, k, seq)
 	traverser.init()
 
-	console.log traverser
+
+# console.log tree
