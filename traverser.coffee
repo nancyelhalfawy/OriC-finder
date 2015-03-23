@@ -1,9 +1,10 @@
 
 
-dna = "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"
-dna = "ATGATCTG"
+# dna = "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"
+# dna = "ATGATCTG"
+dna = "AAAAAGTCGATGCTTAGCCA"
 tree = {branches:{}}
-k = 5
+k = 4
 
 namespace = (start_point, string) ->
 	ns = string.split('')
@@ -19,19 +20,37 @@ namespace = (start_point, string) ->
 				value: p
 			b = b.branches[p]
 		
-		b.sps.push i + start_point
+
+		b.spts.push index + start_point
 	
 	return tree[ns[0]]
 
 
 traverseCommander =
-	on: ->
+
+	funcs: []
+
+	listen: (f, context = null) ->
+		@funcs.push { func: f, context: context }
+		return @funcs.length
+
+	dismiss: (i) ->
+		@funcs.splice i, 1
+
+	walk: (n = 1) ->
+		for i in [0...n]
+			@funcs.forEach (f) -> f.func.call f.context
+
+
+traverser_list_of_success = []
 
 class Traverser
+
 	constructor: (@start_point, @distance, @sequence) -> @
 	wildcards: 2
 	traveled: 0
 	traverse_paths: []
+	kmers: 0
 
 	traverse: ->
 		deletion = []
@@ -45,33 +64,59 @@ class Traverser
 				addition.push index
 
 
+		for i in addition
+
+			@cloneInto @traverse_paths[i].branches, tolerance = @traverse_paths[i].tolerance - 1
+			deletion.push(i)
+
 		for i in deletion
 			@traverse_paths.splice i, 1
-		for i in addition
-			@traverse_paths.push { branches: val.branches, type: "ghost-clone", tolerance: tolerance }
 
-		@traveled++
+		if @traveled >= @distance
+			@kmers++
+
+		if @traverse_paths.length > 0
+			@traveled++
 
 
+	createPath: (branches, type, tolerance = @wildcards) ->
+		return { branches: branches, type: type, tolerance: tolerance }
 
 	cloneInto: (branch, tolerance = @wildcards) ->
 		for leaf, val of branch
-			@traverse_paths.push { branches: val.branches, type: "ghost-clone", tolerance: tolerance }
+			@traverse_paths.push @createPath val.branches, "ghost-clone", tolerance
 	init: ->
 		if not tree.branches.hasOwnProperty @sequence[0]
 			@wildcards--
 			@cloneInto tree.branches
 		else
-			@traverse_paths.push { branches: tree.branches[@sequence[0]].branches, type: "main" }
+			@traverse_paths.push @createPath tree.branches[@sequence[0]].branches, "main"
 
 		@traveled++
 
-		traverseCommander.onwalk @traverse
+		traverseCommander.listen @traverse, @
 
-for i in [0...dna.length]
+# build initial structure
+for i in [0...k]
+	seq = dna.substr i, k - i
+	namespace i, seq
+
+# To initial traverse to catch up with the building of the structure
+seq = dna.substr 0, k
+traverser = new Traverser(0, k, seq)
+traverser.init()
+traverseCommander.walk(k)
+
+console.log traverser
+
+for i in [1...dna.length - k] when i < 4
+
 	seq = dna.substr i, k
 	namespace i, seq
-	#traverser = new Traverser(i, k, seq)
-	#traverser.init()
 
-console.log tree
+	traverseCommander.walk()
+
+	traverser = new Traverser(i, k, seq)
+	traverser.init()
+
+	console.log traverser
