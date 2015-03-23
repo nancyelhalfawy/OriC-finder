@@ -1,8 +1,8 @@
 
 
-# dna = "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"
+dna = "CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"
 # dna = "ATGATCTG"
-dna = "AAAAAGTCGATGCTTAGCCA"
+# dna = "AAAAAGTCGATGCTTAGCCA"
 tree = {branches:{}}
 k = 4
 
@@ -63,6 +63,12 @@ class Traverser
 
 			path.distance_traveled++
 
+			if path.distance_traveled > k
+				traverser_list_of_success.push
+					branches: path.branches
+					sequence: @sequence
+				deletion.push index
+
 			if not path.branches.hasOwnProperty @sequence[@traveled]
 
 				path.tolerance--
@@ -72,21 +78,21 @@ class Traverser
 				else
 					addition.push index
 
+
+
+
 		# if e.g. ATGAGAT gets match, on ATGAG$ but $ isnt A, then addition -> spawn clones
 		# Otherwise, what should happend when path.distance_traveled is k?
 
 		for i in addition
 			atp = @traverse_paths[i]
-			@cloneInto atp.branches, 'ghost-clone' atp.tolerance, atp.distance_traveled
+			@cloneInto atp.branches, 'ghost-clone', atp.tolerance, atp.distance_traveled
 
 			deletion.push(i)
 
 		for i in deletion
 			@traverse_paths.splice i, 1
 
-		if @traveled is k then console.log @sequence, @start_point
-
-		if @traveled is k then @kmers++
 		if @traverse_paths.length < 1 then return @end()
 
 
@@ -95,11 +101,10 @@ class Traverser
 		traverseCommander.dismiss @commander_index
 
 	createPath: (branches, type, tolerance = @wildcards, distance_traveled = 0) ->
-		return
-			branches: branches
-			type: type
-			tolerance: tolerance
-			distance_traveled: distance_traveled
+		branches: branches
+		type: type
+		tolerance: tolerance
+		distance_traveled: distance_traveled
 
 	cloneInto: (branch, tolerance = @wildcards, distance_traveled = 0) ->
 		for leaf, val of branch
@@ -138,5 +143,6 @@ for i in [0...dna.length - k] when i < 14
 	traverser = new Traverser(i, k, seq)
 	traverser.init()
 
+console.log traverser_list_of_success
 
 # console.log tree
