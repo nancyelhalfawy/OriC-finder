@@ -1,0 +1,49 @@
+<ol class="breadcrumb">
+	<li class="active">
+		<i class="fa fa-location-arrow"></i> Currently Selected DNA: <b id='selected-dna'>...</b>
+	</li>
+</ol>
+
+<div class='row'>
+	<div class='col-md-4'>
+
+		<form>
+			<div class='form-group'>
+				<label>Threshold: <span id='threshold-label'></span></label>
+				<input type='range' min='0.005' max='0.15' step="0.001" value="0.03" id='threshold'>
+			</div>
+			<div class='form-group'>
+				<label>Speed cap: <span id='speed-cap-label'>uncapped</span></label>
+				<input type='range' min='10' max='65' step="5" value="65" id='speed-cap'>
+			</div>
+			<div class="form-group">
+				<p>
+					<button type="button" class="btn btn-primary btn-lg" id="start-analyze">Run</button>
+					<button type="button" class="btn btn-danger btn-lg" id="stop-analyze" disabled="disabled">Stop</button>
+					<button type="button" class="btn btn-link btn-lg" disabled="disabled" id="skew-progress"></button>
+				</p>
+			</div>	
+		</form>
+
+
+	</div>
+	<div class='col-md-8'>
+		<table class="table" id='sequrence-table'>
+			<thead>
+				<tr>
+					<th>Sequence</th>
+					<th>BP index</th>
+					<th>Reverse complement</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>ATCTCGA</td>
+					<td>1203401</td>
+					<td>TCGAGAT</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+

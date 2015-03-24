@@ -1,0 +1,67 @@
+
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">OriC Finder</a>
+            </div>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav" id='main-navigation'>
+                    <li id='menu-home'>
+                        <a href="/"><i class="fa fa-fw fa-home"></i> Home</a>
+                    </li>
+                    <li id='menu-selectdna'>
+                        <a href="/selectdna"><i class="fa fa-fw fa-list-alt"></i> Select DNA</a>
+                    </li>
+                    <li>
+                        <a href="no-nav" data-toggle="collapse" data-target="#demo" aria-expanded='true'><i class="fa fa-fw fa-flask"></i> Analyze <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="demo" class="collapse in" aria-expanded='true'>
+
+                            <li id="menu-skew">
+                                <a href="/skewanalyze"><i class="fa fa-fw fa-bar-chart-o"></i> GC Skew</a>
+                            </li>
+                            <li id="menu-dnaa">
+                                <a href="/dnaa"><i class="fa fa-fw fa-spinner"></i> DnaA boxes</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/links"><i class="fa fa-fw fa-external-link"></i> Links</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row" id='dynamic-pages'>
+                    <div class="col-lg-12">
+                        <h1 class="page-header" id='page-title'>
+                            About <small>Statistics Overview</small>
+                        </h1>
+                    </div>
+                    <div class="col-lg-12" style='height: 100%' id='page-content'></div>
+                </div>
+             </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
