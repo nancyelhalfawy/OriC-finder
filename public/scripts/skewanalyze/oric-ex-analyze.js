@@ -38,9 +38,11 @@ function calculateOrigins (tangents, window_size, inclanation_sample_frequency, 
 	var split_window = Math.ceil(window_size / 2),
 		samples_length = Math.floor(split_window / inclanation_sample_frequency);
 
-	// example, samples_length = 4
 
-	for (var i = 0; i < 3 * samples_length; i++) {
+	// MAY BE SUBJECT TO CHANGE, CHANGE THE VALUES OF overlap_multipl
+	// old default was 3
+	var overlap_multipl = 5;
+	for (var i = 0; i < overlap_multipl * samples_length; i++) {
 		tangents.push(tangents[i]);
 	}
 
