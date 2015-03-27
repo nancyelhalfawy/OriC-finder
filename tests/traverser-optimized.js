@@ -335,4 +335,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=traverser-refactor.js.map
+//# sourceMappingURL=traverser-optimized.js.map
