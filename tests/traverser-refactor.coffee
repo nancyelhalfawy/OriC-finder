@@ -1,18 +1,20 @@
 
 input =
 	DNA:
-		lines: ["ACAAGATGCCATTGTCCCCCGGCCTCCTGCTGCTGCTGCTCTCCGGGGCCACGGCCACCGCTGCCCTGCC",
-				"CCTGGAGGGTGGCCCCACCGGCCGAGACAGCGAGCATATGCAGGAAGCGGCAGGAATAAGGAAAAGCAGC",
-				"CTCCTGACTTTCCTCGCTTGGTGGTTTGAGTGGACCTCCCAGGCCAGTGCCGGGCCCCTCATAGGAGAGG",
-				"AAGCTCGGGAGGTGGCCAGGCGGCAGGAAGGCGCACCCCCCCAGCAATCCGCGCGCCGGGACAGAATGCC",
-				"CTGCAGGAACTTCTTCTGGAAGACCTTCTCCTCCTGCAAATAAAACCTCACCCATGAATGCTCACGCAAG",
-				"TTTAATTACAGACCTGAA"]
-		line_length: 70
+		# lines: ["ACAAGATGCCATTGTCCCCCGGCCTCCTGCTGCTGCTGCTCTCCGGGGCCACGGCCACCGCTGCCCTGCC",
+		# 		"CCTGGAGGGTGGCCCCACCGGCCGAGACAGCGAGCATATGCAGGAAGCGGCAGGAATAAGGAAAAGCAGC",
+		# 		"CTCCTGACTTTCCTCGCTTGGTGGTTTGAGTGGACCTCCCAGGCCAGTGCCGGGCCCCTCATAGGAGAGG",
+		# 		"AAGCTCGGGAGGTGGCCAGGCGGCAGGAAGGCGCACCCCCCCAGCAATCCGCGCGCCGGGACAGAATGCC",
+		# 		"CTGCAGGAACTTCTTCTGGAAGACCTTCTCCTCCTGCAAATAAAACCTCACCCATGAATGCTCACGCAAG",
+		# 		"TTTAATTACAGACCTGAA"]
+		lines: ["CGGACTCGACAGATGTGAAGAACGACAATGTGAAGACTCGACACGACAGAGTGAAGAGAAGAGGAAACATTGTAA"]
+		line_length: 50
 
-	window_size: 150
+	window_size: 100
 	mutation_threshold: 2
 
 
+k = 5
 
 tree = {
 	branches:{}
@@ -38,7 +40,6 @@ namespace = (start_point, string) ->
 		b.spts.push spts
 	
 	return tree[ns[0]]
-
 
 class EventListener
 
@@ -72,8 +73,40 @@ reverseComplement = (string) ->
 
 
 
+class CandidateFilter
+
+	max_candidates: []
+
+	constructor: -> @
+
+	max: 0
+
+	push: (traverser) ->
+
+		if traverser.paths.length >= @max - 1
+			if traverser.paths.length > @max
+				@max++
+				@max_candidates = _.filter @max_candidates, (candidate) ->
+					candidate.rank >= @max - 1
+					
+
+			candidate =
+				rank: traverser.paths.length + 1
+				sequences: [traverser.sequence]
+				reverse_complement: traverser.reverse_complement
+
+			for i in traverser.paths
+				candidate.sequences.push i.stroll.join("")
+
+			@max_candidates.push candidate
+
+	clean: ->
+		for candidate in @max_candidates
+			candidate.sequences = _.uniq candidate.sequences
+			candidate.rank = candidate.sequences.length
 
 
+filter = window.filter = new CandidateFilter()
 
 class Traverser
 
@@ -104,7 +137,8 @@ class Traverser
 		# it is suposed to eliminate intersecting sequence matching
 		lower = maxspts < @start_point - input.window_size
 
-		upper = maxspts >= @start_point or @start_point < k
+		# (maxspts >= @start_point) or 
+		upper = @start_point < k
 		# debugger
 		# if @commander_id is 354 then debugger
 		# if not upper and not lower then debugger
@@ -157,11 +191,7 @@ class Traverser
 
 	end: ->
 		# bullshti code start
-		if @paths.length >= 3
-			console.log @
-			console.log @sequence
-			for i in @paths
-				console.log i.stroll.join("")
+		filter.push @
 		# bullshit code end
 
 		traverseCommander.dismiss @commander_id
@@ -173,7 +203,6 @@ traverseCommander = new EventListener()
 window.tlist = tlist = []
 
 dna = input.DNA.lines.join('')
-k = 9
 console.log "DNA length: ", dna.length
 for i in [0..dna.length - k]
 
@@ -188,4 +217,8 @@ for i in [0..dna.length - k]
 
 traverseCommander.walk(k)
 
-console.log tree
+filter.clean()
+
+console.log filter
+
+
