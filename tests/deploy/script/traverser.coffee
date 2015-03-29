@@ -1,41 +1,42 @@
 
 
-importScripts './traverser-algoritms.js' # requires global variables: tree, traverseCommander, filter, k, input
-
-tree = {
-	branches:{}
-}
-filter = new CandidateFilter()
-traverseCommander = new EventListener()
 
 
+self.addEventListener 'message', (message) -> initiate(message.data)
 
 initiate = (input) ->
 
 	self.input = input
 	k = self.k = input.k
+	t = self.t = input.mutation_threshold
 
 	dna = input.DNA.lines.join('')
 
+	self.postMessage
+		message: 'traverse-init'
+		data:
+			input: input
+
 	for i in [0..dna.length - k]
 
-		seq = dna.substr i, k
-		namespace i, seq
-
-		traverseCommander.walk()
-
-		new Traverser seq, i, 2
-		new Traverser reverseComplement(seq), i, 2, true
-
-
-	traverseCommander.walk(k)
-
-	filter.clean()
-
-	self.postMessage filter
+		self.postMessage
+			message: 'traverse'
+			data:
+				sequence: dna.substr i, k
+				index: i
+				threshold: t
 
 
+	# once done do this
 
-self.addEventListener (message) ->
+	# self.postMessage
+	# 	message: 'walk'
+	# 	data:
+	# 		times: k
+	
+	# self.postMessage
+	# 	message: 'request-filter-return'
 
-	initiate(message.data)
+
+
+

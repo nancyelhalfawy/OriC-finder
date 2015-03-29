@@ -1,9 +1,10 @@
 
 
+importScripts '../lib/underscore-min.js'
 
-namespace = (start_point, string) ->
+@namespace = (start_point, string) ->
 	ns = string.split('')
-	b = tree
+	b = self.tree
 	
 	for p, index in ns
 		if b.branches.hasOwnProperty p
@@ -19,9 +20,19 @@ namespace = (start_point, string) ->
 		b.maxspts = spts
 		b.spts.push spts
 	
-	return tree[ns[0]]
+@reverseComplement = (string) ->
 
-class EventListener
+	complements =
+		"A": "T"
+		"T": "A"
+		"G": "C"
+		"C": "G"
+
+	ns = ""
+	ns = complements[i] + ns for i in string
+	ns
+
+class @EventListener
 
 	funcs: []
 
@@ -38,107 +49,8 @@ class EventListener
 				f.func.call f.context
 
 
-reverseComplement = (string) ->
 
-	complements =
-		"A": "T"
-		"T": "A"
-		"G": "C"
-		"C": "G"
-
-	ns = ""
-	ns = complements[i] + ns for i in string
-	ns
-
-
-
-
-class CandidateFilter
-
-	max_candidates: []
-
-	constructor: -> 
-		_.bind @clean, @
-		@
-
-	max: 0
-
-	push: (traverser) ->
-
-		if traverser.paths.length >= @max
-					
-			candidate = @createCandidate traverser
-
-			if candidate.sequences.length > @max
-				@max++
-				@max_candidates = _.filter @max_candidates, (candidate) ->
-					candidate.rank >= @max
-
-
-			# if candidate.rank is 3 then debugger
-			@max_candidates.push candidate
-
-	createCandidate: (traverser) ->
-
-		candidate =
-			reverse_complement: traverser.reverse_complement
-
-
-		candidate.sequences = @ftptcs traverser
-		candidate.rank = candidate.sequences.length
-
-		return candidate
-
-	fromTraverserPathToCandidateSequence: (args...)->
-		@ftptcs args...
-
-	ftptcs: (traverser) ->
-
-		sequences = [{ seq: traverser.sequence, spt: traverser.start_point }]
-
-		for path in traverser.paths
-			for spt, i in path.spts
-				spt = spt - k
-				if spt < traverser.start_point - input.window_size then continue
-				sequence =
-					seq: path.stroll.join("")
-					spt: spt
-				sequences.push sequence
-
-		sequences.sort (a, b) ->
-			a.spt - b.spt
-
-		sequences = @groupOverlaps sequences
-
-		return sequences
-
-	groupOverlaps: (sequences) ->
-		groups = []
-		gindex = 0
-		for sequence, i in sequences by -1 when i > 0
-			if sequences[i-1].spt > sequence.spt - k
-				if not groups[gindex] then groups.push([])
-				groups[gindex] = groups[gindex].concat [sequence, sequences[i-1]]
-			else
-				groups[gindex] = _.uniq(groups[gindex])
-				# gindex++
-				groups[gindex++] = [sequence]
-
-		return groups
-
-
-
-
-	clean: =>
-		# debugger
-		console.log @max
-		@max_candidates = _.reject @max_candidates, (candidate) =>
-			candidate.rank < @max
-
-
-
-
-class Traverser
+class @Traverser
 
 	constructor: (@sequence, @start_point, threshold = 1, @reverse_complement = false) ->
 
@@ -147,9 +59,9 @@ class Traverser
 		@distance_traveled = 0
 		base_tollerance = threshold + 1
 
-		@commander_id = traverseCommander.listen @walk, @
+		@commander_id = self.traverseCommander.listen @walk, @
 
-		for bp, subpath of tree.branches
+		for bp, subpath of self.tree.branches
 			# if @isOutOfRange subpath.maxspts then continue
 
 			@spawn
@@ -168,7 +80,7 @@ class Traverser
 		lower = maxspts < @start_point - input.window_size
 
 		# (maxspts >= @start_point) or 
-		upper = @start_point < k
+		upper = @start_point < self.input.k
 		# debugger
 		# if @commander_id is 354 then debugger
 		# if not upper and not lower then debugger
@@ -206,7 +118,7 @@ class Traverser
 
 		@validatePaths()
 
-		if @distance_traveled >= k - 1
+		if @distance_traveled >= self.input.k - 1
 			@end()
 
 
@@ -220,9 +132,27 @@ class Traverser
 
 
 	end: ->
-		filter.push @
 
-		traverseCommander.dismiss @commander_id
+		# filter.push @
+		self.postMessage
+			message: 'filter-push'
+			data: 
+				paths: @paths
+				reverse_complement: @reverse_complement
+				sequence: @sequence
+				start_point: @start_point
 
 
-	
+		self.traverseCommander.dismiss @commander_id
+
+
+
+
+
+
+
+
+
+
+
+

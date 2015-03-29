@@ -303,6 +303,7 @@
     };
 
     Traverser.prototype.end = function() {
+      if (this.start_point === 4398 && this.reverse_complement === false) debugger
       filter.push(this);
       return traverseCommander.dismiss(this.commander_id);
     };
