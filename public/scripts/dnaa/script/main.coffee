@@ -125,4 +125,5 @@ data =
 
 dna_length = data.DNA.line_length * (data.DNA.lines.length - 1) + data.DNA.lines[data.DNA.lines.length - 1].length
 data.dna_length = dna_length
+
 mainWorker.postMessage data

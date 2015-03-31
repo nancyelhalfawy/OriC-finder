@@ -41,10 +41,12 @@ function calculateOrigins (tangents, window_size, inclanation_sample_frequency, 
 
 	// MAY BE SUBJECT TO CHANGE, CHANGE THE VALUES OF overlap_multipl
 	// old default was 3
-	var overlap_multipl = 5;
-	for (var i = 0; i < overlap_multipl * samples_length; i++) {
-		tangents.push(tangents[i]);
-	}
+
+	// var overlap_multipl = 5;
+	// for (var i = 0; i < overlap_multipl * samples_length; i++) {
+	// 	tangents.push(tangents[i]);
+	// }
+	// INSTEAD OF DOING THIS ADD FIRST 10% DNA TO THE END IN modules/genome-download.coffee
 
 
 	var data = [];

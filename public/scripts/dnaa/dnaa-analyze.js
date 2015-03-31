@@ -1,9 +1,8 @@
 
-importScript('dnaa-algorithms.js');
+function getDnaA(data) {
 
-function getDnaA(text) {
+	self.postMessage({ message: 'dnaa-analyze', data: data });
 	
-
 }
 
 
@@ -27,15 +26,17 @@ self.addEventListener('message', function (ev) {
 			type: "minimum"
 	*/
 
-	function getDna(pos) {
+	function getDNA(pos) {
 
 		var start_rest = pos.start % 70,
 			end_rest = pos.end % 70,
 
 			start_row = (pos.start - start_rest) / 70,
-			end_row = (pos.end - end_rest) / 70,
+			end_row = (pos.end - end_rest) / 70;
 
-			text = genome[start_row].substr(start_rest);
+		// if ( ! genome[start_row] ) debugger
+				
+		var text = genome[start_row].substr(start_rest);
 
 		for (var i = start_row + 1; i < end_row; i++) {
 			text += genome[i];
@@ -53,13 +54,15 @@ self.addEventListener('message', function (ev) {
 		var start = origins[i].bp_index - split_window,
 			end = origins[i].bp_index + split_window;
 
+		// debugger
+
 		var string = getDNA({
 			start: start,
 			end: end
 		});
 
-		data.push({
-			DnaA: getDnaA(string)
+		DnaA: getDnaA({
+			dna: string,
 			start: start,
 			end: end
 		});

@@ -116,10 +116,17 @@ class Genomes
 		input = fpath + 'dna.fna'
 		output = fpath + 'dna.json'
 
+
 		lines = fs.readFileSync(input).toString().split('\n')
 		len = lines.length - 1 # last line is empty
 		last_line_i = len - 1
 		last_line = lines[last_line_i]
+
+		one_line_length = lines[1].length
+
+		overlap = Math.round(0.1 * last_line_i) # overlap 10% of the genome to match beginning and end
+		overlap_lines = []
+		overlap_lines_buffer = ""
 
 		console.log lines.length
 
@@ -134,20 +141,42 @@ class Genomes
 		editLineEnding = ",\n"
 
 		outLine = =>
-			bp_len = last_line.replace(/\s/g, "").length + (last_line_i - 1) * 70
+			bp_len = last_line.replace(/\s/g, "").length + (last_line_i - 1) * 70 + overlap * 70
 
 			folder_text = (JSON.stringify @getFolder(id)).substr 1
-			"], \"lines_length\": #{last_line_i}, \"bp_length\": #{bp_len}, #{folder_text}"
+			"], \"lines_length\": #{last_line_i + overlap}, \"one_line_length\": #{one_line_length}, \"bp_length\": #{bp_len}, #{folder_text}"
 
 		fs.appendFileSync output, infoString(lines[0])
 
+		overlap_lines_buffer += last_line
+
 		for index in [1...last_line_i]
 			line = lines[index]
-			fs.appendFileSync output, editLine(line) + editLineEnding
 
-		fs.appendFileSync output, editLine(last_line)
+			line_content = editLine(line) + editLineEnding
+
+			if index <= overlap then overlap_lines_buffer += line
+
+			fs.appendFileSync output, line_content
+
+
+		# for line_content in overlap_lines
+		overlap_rest = overlap_lines_buffer.length % one_line_length
+		overlap_lines_len = (overlap_lines_buffer.length - overlap_rest) / one_line_length
+		for line_index in [0..overlap_lines_len - 1]
+			line = overlap_lines_buffer.substr(line_index * one_line_length, one_line_length)
+			line_content = editLine(line) + editLineEnding
+			fs.appendFileSync output, line_content
+
+
+		fs.appendFileSync output, editLine(overlap_lines_buffer.substr(overlap_lines_len * one_line_length, overlap_rest))
+
+		console.log overlap_rest, overlap_lines_len
+		console.log overlap_lines_buffer
 
 		fs.appendFileSync output, outLine()
+
+		# Dam this code is ugly
 
 
 		callback.call @, id
