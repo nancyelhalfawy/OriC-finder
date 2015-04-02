@@ -174,8 +174,14 @@ class DnaA extends Backbone.View
 
 	calculate: (dna) ->
 
-		worker = new Worker('/scripts/dnaa/dnaa-analyze.js')
-		worker.addEventListener 'message', (ev) ->
+		# workers.mainWorker.postMessage
+			# dna: string,
+			# start: start,
+			# end: end
+
+		# worker = new Worker('/scripts/dnaa/dnaa-analyze.js')
+		# worker.addEventListener 'message', (ev) ->
+		workerEventListener = (ev) ->
 
 			data = ev.data.data
 
@@ -194,7 +200,26 @@ class DnaA extends Backbone.View
 				DNA:
 					dna: data.dna
 
-		worker.postMessage dna
+		getRandomInt = (min, max) ->
+			return Math.floor(Math.random() * (max - min + 1)) + min
+
+		bases = ['A', 'T', 'G', 'C']
+		for i in [0..2] # two origins
+
+			str = ""
+			for x in [0...2000] # length of the genome
+				str += bases[getRandomInt(0, 3)]
+
+			workerEventListener
+				data:
+					data:
+						dna: str
+						start: i * 2000
+						end: (i + 1) * 2000
+
+
+
+		# worker.postMessage dna
 
 
 
@@ -214,6 +239,8 @@ class DnaA extends Backbone.View
 
 
 	render: =>
+
+		# window.start = @calculate
 
 
 		@$el.html @templates.content()

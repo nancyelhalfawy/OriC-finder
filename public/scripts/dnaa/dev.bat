@@ -1,1 +1,1 @@
-coffee --watch --compile --map --output build script
+coffee --watch --compile --map --output build src
