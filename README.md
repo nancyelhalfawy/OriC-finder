@@ -14,5 +14,5 @@ Online version at
   - Implement the DnaA box finding algoritm
 
 
-[1]: [ftp.ncbi.nlm.nih.gov/genomes/Bacteria]
+[1]: [http://ftp.ncbi.nlm.nih.gov/genomes/Bacteria]
 [2]: [http://euhiemf.github.io/OriC-finder/]
