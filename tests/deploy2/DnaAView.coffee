@@ -1,8 +1,6 @@
 
-backbone = require 'backbone'
-_ = require 'underscore'
-
-util = require '../util.coffee'
+# backbone = require 'backbone'
+# _ = require 'underscore'
 
 class EventListener
 
@@ -224,97 +222,58 @@ class Workers
 
 
 
-class DnaA extends Backbone.View
 
-	initialize: ->
+window.calculate = (dna) ->
 
-		@on 'load', @render
+	workerEventListener = (ev) ->
 
-	calculate: (dna) ->
+		data = ev.data.data
 
-		# workers.mainWorker.postMessage
-			# dna: string,
-			# start: start,
-			# end: end
+		workers = new Workers({
+			k: 9
+			dna_length: data.dna_length
+		})
 
-		# worker = new Worker('/scripts/dnaa/dnaa-analyze.js')
-		# worker.addEventListener 'message', (ev) ->
-		workerEventListener = (ev) ->
+		workers.mainWorker.postMessage
+			window_size: 200
+			mutation_threshold: 2
+			k: 9
+			dna_length: data.dna_length
+			DNA:
+				dna: data.dna
 
-			data = ev.data.data
+	getRandomInt = (min, max) ->
+		return Math.floor(Math.random() * (max - min + 1)) + min
 
-			# debugger
+	bases = ['A', 'T', 'G', 'C']
+	for i in [0..2] # two origins
 
-			workers = new Workers({
-				k: 9
-				dna_length: data.dna_length
-			})
+		str = ""
+		for x in [0...800] # length of the genome
+			str += bases[getRandomInt(0, 3)]
 
-			workers.mainWorker.postMessage
-				window_size: 500
-				mutation_threshold: 2
-				k: 9
-				dna_length: data.dna_length
-				DNA:
-					dna: data.dna
-
-		getRandomInt = (min, max) ->
-			return Math.floor(Math.random() * (max - min + 1)) + min
-
-		bases = ['A', 'T', 'G', 'C']
-		for i in [0..2] # two origins
-
-			str = ""
-			for x in [0...2000] # length of the genome
-				str += bases[getRandomInt(0, 3)]
-
-			workerEventListener
+		workerEventListener
+			data:
 				data:
-					data:
-						dna_length: 2000
-						dna: str
-						start: i * 2000
-						end: (i + 1) * 2000
+					dna_length: 2000
+					dna: str
+					start: i * 2000
+					end: (i + 1) * 2000
 
 
-		progress.events.on 'update', (percentage) ->
-			console.log percentage
-		progress.start()
+	progress.events.on 'update', (percentage) ->
+		console.log percentage
 
-		# worker.postMessage dna
+	progress.start()
 
-
-
-	start: ->
-
-		dna = util.storage.get('dna')
-
-		if not dna
-			return alert('You need to select and preanalyze dna in GC skew')
-		else
-			@calculate dna
-
-	events: 
-		'click #start-analyze': 'start'
+	# worker.postMessage dna
 
 
 
 
-	render: =>
-
-		window.start = @calculate
-
-
-		@$el.html @templates.content()
-
-		dna_meta = util.getSelectedDNAMeta()
-
-		if dna_meta
-			@$('#selected-dna').text dna_meta.description
-
-		@delegateEvents()
 
 
 
 
-module.exports = DnaA
+
+
