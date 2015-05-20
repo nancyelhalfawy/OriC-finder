@@ -82,13 +82,13 @@ class Test
 	constructor: (@id) ->
 
 		tstL =
-			'cache.listing': new AjaxTests "cache/gen-db/listing.json"
-			'ftp.listing': new AjaxTests "download"
+			'cache.listing': new AjaxTests "/cache/gen-db/listing.json"
+			'ftp.listing': new AjaxTests "/download"
 			'localStorage.listing': new LocalStorageTests "DNA"
 
 		tstD =
-			'cache.DNA': new AjaxTests "cache/gen-db/#{@id}/dna.json"
-			'ftp.DNA': new AjaxTests "download/#{@id}"
+			'cache.DNA': new AjaxTests "/cache/gen-db/#{@id}/dna.json"
+			'ftp.DNA': new AjaxTests "/download/#{@id}"
 			'localStorage.DNA': new LocalStorageTests "#{@id}:line:0"
 
 		tst = if @id then tstD else tstL
