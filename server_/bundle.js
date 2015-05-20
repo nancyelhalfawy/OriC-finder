@@ -35156,13 +35156,13 @@ Test = (function() {
     this.run = bind(this.run, this);
     this.setOrder = bind(this.setOrder, this);
     tstL = {
-      'cache.listing': new AjaxTests("cache/gen-db/listing.json"),
-      'ftp.listing': new AjaxTests("download"),
+      'cache.listing': new AjaxTests("/OriC-finder/cache/gen-db/listing.json"),
+      'ftp.listing': new AjaxTests("/OriC-finder/download"),
       'localStorage.listing': new LocalStorageTests("DNA")
     };
     tstD = {
-      'cache.DNA': new AjaxTests("cache/gen-db/" + this.id + "/dna.json"),
-      'ftp.DNA': new AjaxTests("download/" + this.id),
+      'cache.DNA': new AjaxTests("/OriC-finder/cache/gen-db/" + this.id + "/dna.json"),
+      'ftp.DNA': new AjaxTests("/OriC-finder/download/" + this.id),
       'localStorage.DNA': new LocalStorageTests(this.id + ":line:0")
     };
     tst = this.id ? tstD : tstL;
