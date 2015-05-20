@@ -1,0 +1,26 @@
+
+.main-app-container .page {
+	display: none;
+}
+.main-app-container .page.active {
+	display: block;
+}
+
+
+body.standalone nav {
+	display: none;
+}
+body.standalone #page-wrapper {
+	margin: 0;
+}
+
+.main-app-container .breadcrumb {
+
+	border-bottom: 1px solid #777;
+	padding-bottom: 10px;
+
+}
+
+.page-container-dnaa #synthesized-dna-graph-buffer svg {
+	cursor: pointer;
+}
