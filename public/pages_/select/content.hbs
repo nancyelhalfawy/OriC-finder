@@ -1,0 +1,42 @@
+
+<ol class="breadcrumb">
+	<li class="active">
+		<i class="fa fa-location-arrow"></i> Currently Selected DNA: <b id='selected-dna'>...</b>
+	</li>
+</ol>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+
+	{{#each alphatree}}
+
+		<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="heading{{letter}}">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#selectdna-{{letter}}" aria-expanded="true" aria-controls="selectdna-{{letter}}">
+						{{letter}}
+					</a>
+				</h4>
+			</div>
+			<div id="selectdna-{{letter}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{letter}}">
+				<ul class="list-group">
+					{{#each folders}}
+						<li class="list-group-item" id='folder-{{id}}'>
+							<div class="row genome-model-container">
+								<div class="text">
+									{{{foldername}}} - <span class='download'>{{{downloaded}}}</span>
+								</div>
+								<div class="loading">
+
+								</div>
+							</div>
+						</li>
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+
+	{{/each}}
+
+
+</div>
+
