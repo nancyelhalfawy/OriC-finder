@@ -34415,7 +34415,7 @@ SkewGraph = (function(superClass) {
   SkewGraph.prototype.startAnalyze = function(stuff) {
     var path_prefix;
     path_prefix = "";
-    if (location.hostname === "euhiemf.github.io") {
+    if (location.hostname === "ricsam.github.io") {
       path_prefix = "/OriC-finder";
     }
     this.worker = new Worker(path_prefix + '/scripts/skewanalyze/skew-analyze.js');
@@ -35163,7 +35163,7 @@ Test = (function() {
     this.run = bind(this.run, this);
     this.setOrder = bind(this.setOrder, this);
     prefix = "";
-    if (location.hostname === "euhiemf.github.io") {
+    if (location.hostname === "ricsam.github.io") {
       prefix += "/OriC-finder";
     }
     tstL = {
